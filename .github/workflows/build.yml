@@ -1,0 +1,27 @@
+# Simple set of rules for GitHub actions integration with a ROS project
+#
+
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.6
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@0.7.5
+        with:
+          required-ros-distributions: jazzy
+      - name: Install dependencies
+        uses: ros-tooling/action-ros-ci@0.3.13
+        with:
+          package-name: sicks300_2
+          target-ros2-distro: jazzy
+          skip-tests: false
