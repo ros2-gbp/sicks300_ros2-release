@@ -1,8 +1,8 @@
-# sicks300_2
+# sicks300_ros2
 
 ![ROS2](https://img.shields.io/badge/ros2-jazzy-blue?logo=ros&logoColor=white)
-![License](https://img.shields.io/github/license/ajtudela/sicks300_2)
-[![Build](https://github.com/ajtudela/sicks300_2/actions/workflows/build.yml/badge.svg)](https://github.com/ajtudela/sicks300_2/actions/workflows/build.yml)
+![License](https://img.shields.io/github/license/ajtudela/sicks300_ros2)
+[![Build](https://github.com/ajtudela/sicks300_ros2/actions/workflows/build.yml/badge.svg)](https://github.com/ajtudela/sicks300_ros2/actions/workflows/build.yml)
 
 ## Overview
 
@@ -18,7 +18,7 @@ However, it does not cover the full functionality of the protocol:
 
 **Keywords:** ROS2, laser, driver, sick s300, lifecycle
 
-The sicks300_2 package has been tested under [ROS2] Jazzy on [Ubuntu] 24.04. but ported to ROS2. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
+The sicks300_ros2 package has been tested under [ROS2] Jazzy on [Ubuntu] 24.04. but ported to ROS2. This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
 ## S300 Configuration
 Here are a few notes about how to best configure the S300:
@@ -45,7 +45,7 @@ Here are a few notes about how to best configure the S300:
 To build from source, clone the latest version from this repository into your colcon workspace and compile the package using
 ```bash
 cd colcon_workspace/src
-git clone https://github.com/ajtudela/sicks300_2.git
+git clone https://github.com/ajtudela/sicks300_ros2.git
 cd ../
 rosdep install -i --from-path src --rosdistro jazzy -y
 colcon build
@@ -59,19 +59,24 @@ Add the user to the dialout group to access the USB port:
 sudo usermod -a -G dialout $USER
 ```
 
-Run the sicks300_2 node with:
+Run the sicks300_ros2 node with:
 ```bash
-ros2 run sicks300_2 sicks300_2
+ros2 run sicks300_ros2 sicks300_ros2
 ```
 
 Optionally, you can launch this node with an angulor bound filter:
 ```bash
-ros2 launch sicks300_2 scan_with_filter.launch.py
+ros2 launch sicks300_ros2 scan_with_filter.launch.py
 ```
+By default this launches the package's own `scan_filter` node (see below). To use
+`laser_filters` instead, uncomment the `laser_filter_node` block in
+[scan_with_filter.launch.py](launch/scan_with_filter.launch.py) (and use it instead of
+`filter_node` in the event handler) together with the matching commented-out `scan_filter`
+configuration in [params/default.yaml](params/default.yaml).
 
 ## Nodes
 
-### sicks300_2
+### sicks300_ros2
 
 Driver for the Sick S300 Safety laser scanners.
 
@@ -133,14 +138,47 @@ Driver for the Sick S300 Safety laser scanners.
 
 * **`communication_timeout`** (double, default: 0.2)
 
-	Timeout to shutdown the node in seconds.
+	Time without a valid scan before reporting a communication error diagnostic, in seconds.
 
 * **`fields`**
 
 	Range configuration of the field. Set 1 by default.
+
+### scan_filter
+
+Lightweight node that truncates a `LaserScan` to an angular range `[lower_angle, upper_angle]`.
+
+**Deprecated:** this node is an unmaintained, more fragile reimplementation of what
+[`laser_filters`]'s `LaserScanAngularBoundsFilter` already does; this package already
+declares `laser_filters` as a dependency. Prefer configuring a `laser_filters` filter chain
+(see the commented-out example in [params/default.yaml](params/default.yaml)) for new setups.
+`scan_filter` is kept for backwards compatibility.
+
+#### Subscribed Topics
+
+* **`scan`** ([sensor_msgs/LaserScan])
+
+	The unfiltered laser scan.
+
+#### Published Topics
+
+* **`scan_filtered`** ([sensor_msgs/LaserScan])
+
+	The laser scan truncated to `[lower_angle, upper_angle]`.
+
+#### Parameters
+
+* **`lower_angle`** (double, default: 0.0)
+
+	The angle of the scan to begin filtering at.
+
+* **`upper_angle`** (double, default: 0.0)
+
+	The angle of the scan to end filtering at.
 
 [Ubuntu]: https://ubuntu.com/
 [ROS2]: https://docs.ros.org/en/jazzy/
 [sensor_msgs/LaserScan]: https://docs.ros2.org/jazzy/api/sensor_msgs/msg/LaserScan.html
 [std_msgs/Bool]: https://docs.ros2.org/jazzy/api/std_msgs/msg/Bool.html
 [diagnostic_msgs/DiagnosticArray]: https://docs.ros2.org/jazzy/api/diagnostic_msgs/msg/DiagnosticArray.html
+[`laser_filters`]: https://github.com/ros-perception/laser_filters

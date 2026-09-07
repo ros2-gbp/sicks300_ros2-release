@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef SICKS300_2__COMMON__SCANNERSICKS300_HPP_
-#define SICKS300_2__COMMON__SCANNERSICKS300_HPP_
+#ifndef SICKS300_ROS2__COMMON__SCANNERSICKS300_HPP_
+#define SICKS300_ROS2__COMMON__SCANNERSICKS300_HPP_
 
 // base classes
 #include <math.h>
 #include <stdio.h>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "sicks300_2/common/SerialIO.hpp"
-#include "sicks300_2/common/TelegramS300.hpp"
+#include "sicks300_ros2/common/ISerialIO.hpp"
+#include "sicks300_ros2/common/SerialIO.hpp"
+#include "sicks300_ros2/common/TelegramS300.hpp"
 
 /**
  * Driver class for the laser scanner SICK S300 Professional.
@@ -62,8 +64,12 @@ public:
     WRITE_BUF_SIZE = 10000
   };
 
-  // Constructor
-  ScannerSickS300();
+  /**
+   * @brief Construct a new Scanner Sick S300 object.
+   * @param serial_io Transport used to talk to the scanner. Defaults to the real serial
+   * port implementation; tests can inject a fake to replay captured telegrams.
+   */
+  explicit ScannerSickS300(std::unique_ptr<ISerialIO> serial_io = std::make_unique<SerialIO>());
 
   // Destructor
   ~ScannerSickS300();
@@ -74,17 +80,7 @@ public:
    * @param iBaudRate baud rate
    * @param iScanId the scanner id in the data header (7 by default)
    */
-  bool open(const char * pcPort, int iBaudRate, int iScanId);
-
-  // not implemented
-  void resetStartup();
-
-  // not implmented
-  void startScanner();
-
-  // not implemented
-  void stopScanner();
-  // sick_lms.Uninitialize();
+  bool open(const char * pcPort, int iBaudRate, int iScanId = 7);
 
   // whether the scanner is currently in Standby or not
   bool isInStandby() {return m_bInStandby;}
@@ -93,8 +89,7 @@ public:
 
   bool getScan(
     std::vector<double> & vdDistanceM, std::vector<double> & vdAngleRAD,
-    std::vector<double> & vdIntensityAU, unsigned int & iTimestamp,
-    unsigned int & iTimeNow, const bool debug);
+    std::vector<double> & vdIntensityAU, const bool debug);
 
   void setRangeField(const int field, const ParamType & param) {m_Params[field] = param;}
 
@@ -109,16 +104,14 @@ private:
 
   // Variables
   unsigned char m_ReadBuf[READ_BUF_SIZE + 10];
-  unsigned char m_ReadBuf2[READ_BUF_SIZE + 10];
   unsigned int m_uiSumReadBytes;
   std::vector<int> m_viScanRaw;
-  int m_iPosReadBuf2;
-  static unsigned char m_iScanId;
+  unsigned char m_iScanId;
   int m_actualBufferSize;
   bool m_bInStandby;
 
   // Components
-  SerialIO m_SerialIO;
+  std::unique_ptr<ISerialIO> m_SerialIO;
   TelegramParser tp_;
 
   // Functions
@@ -127,4 +120,4 @@ private:
     std::vector<ScanPolarType> & vecScanPolar);
 };
 
-#endif  // SICKS300_2__COMMON__SCANNERSICKS300_HPP_
+#endif  // SICKS300_ROS2__COMMON__SCANNERSICKS300_HPP_
