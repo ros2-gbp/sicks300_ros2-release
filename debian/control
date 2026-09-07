@@ -1,0 +1,12 @@
+Source: ros-jazzy-sicks300-ros2
+Section: misc
+Priority: optional
+Maintainer: "Alberto Tudela" <ajtudela@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-jazzy-ament-cmake, ros-jazzy-ament-cmake-gtest <!nocheck>, ros-jazzy-ament-lint-auto <!nocheck>, ros-jazzy-ament-lint-common <!nocheck>, ros-jazzy-diagnostic-msgs, ros-jazzy-diagnostic-updater, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-rclcpp-lifecycle, ros-jazzy-rcutils, ros-jazzy-sensor-msgs, ros-jazzy-ros-workspace
+Homepage: https://index.ros.org/p/sicks300_ros2/#jazzy
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-sicks300-ros2
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-jazzy-diagnostic-msgs, ros-jazzy-diagnostic-updater, ros-jazzy-laser-filters, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-rclcpp-lifecycle, ros-jazzy-rcutils, ros-jazzy-sensor-msgs, ros-jazzy-ros-workspace
+Description: This package published a laser scan message out of a Sick S300 laser scanner.
