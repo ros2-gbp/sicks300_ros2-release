@@ -1,3 +1,26 @@
+## sicks300_ros2 (lyrical) - 1.4.0-1
+
+The packages in the `sicks300_ros2` repository were released into the `lyrical` distro by running `/usr/bin/bloom-release --rosdistro lyrical sicks300_ros2` on `Wed, 04 Nov 2026 09:56:16 -0000`
+
+The `sicks300_ros2` package was released.
+
+Version of package(s) in repository `sicks300_ros2`:
+
+- upstream repository: https://github.com/ajtudela/sicks300_ros2.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `1.4.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.4`
+- catkin_pkg version: `1.1.1`
+- rosdep version: `0.27.0`
+- rosdistro version: `1.1.0`
+- vcstools version: `0.1.42`
+
+
 ## sicks300_ros2 (jazzy) - 1.4.0-1
 
 The packages in the `sicks300_ros2` repository were released into the `jazzy` distro by running `/usr/bin/bloom-release --rosdistro jazzy sicks300_ros2` on `Mon, 07 Sep 2026 11:59:06 -0000`
